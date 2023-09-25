@@ -1,0 +1,23 @@
+AllCops:
+  DisabledByDefault: false
+  NewCops: enable
+  TargetRubyVersion: 2.7
+
+Style/Documentation:
+  Enabled: false
+
+Layout:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
+  SafeAutoCorrect: true
+  Exclude:
+    - bin/**/*
+    - Gemfile
+
+Lint/MissingSuper:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
