@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class Maybe
-  attr_reader :value
-
   IsBlank = ->(value) { value.nil? || value.to_s.strip&.empty? || !value }
 
   def self.of(...)
