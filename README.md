@@ -311,7 +311,7 @@ class Order
   end
 
   def sum(x)
-    Try { number: x + 1 }
+    Try {{ number: x + 1 }}
   end
 end
 
@@ -333,7 +333,7 @@ class Order
   end
 
   def sum(x)
-    Try(2) { number: x + ' ' }
+    Try(2) {{ number: x + ' ' }}
   end
 end
 
@@ -353,7 +353,7 @@ class Order
   end
 
   def sum(x)
-    Try(or: 1000) { { number: x + ' ' } }
+    Try(or: 1000) {{ number: x + ' ' }}
   end
 end
 
