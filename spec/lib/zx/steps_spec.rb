@@ -42,6 +42,11 @@ RSpec.describe Zx::Steps do
         .on_success { |some| expect(some.unwrap).to eq(10) }
         .on_failure { |none| expect(none.or(0)).to eq(0) }
       
+      result
+        .map { |n| n + 1 }
+        .on(:success) { |some| expect(some.unwrap).to eq(10) }
+        .on(:failure) { |none| expect(none.or(0)).to eq(0) }
+      
       expect(result).to be_some
       expect(result.unwrap).to eq(9)
     end

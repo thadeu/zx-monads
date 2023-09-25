@@ -96,6 +96,7 @@ end
 #math(some:, none:) -> Receive callables and associate them
 #on_success{} -> Only when Some
 #on_failure{} -> Only then None
+#on(:success|:failure){}
 ```
 
 ### ZX::Maybe
@@ -402,6 +403,15 @@ order.call
   .map { |n| n + 1 }
   .on_success { |some| expect(some.unwrap).to eq(10) }
   .on_failure { |none| expect(none.or(0)).to eq(0) }
+```
+
+```rb
+order = OrderStep.new(20)
+
+order.call
+  .map { |n| n + 1 }
+  .on(:success) { |some| expect(some.unwrap).to eq(10) }
+  .on(:failure) { |none| expect(none.or(0)).to eq(0) }
 ```
 
 ```rb

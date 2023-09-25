@@ -105,6 +105,13 @@ class Maybe
     self
   end
 
+  def on(ontype, &block)
+    case ontype.to_sym
+    when :success then on_success(&block)
+    when :failure then on_failure(&block)
+    end
+  end
+
   class Some < Maybe
     def self.[](...)
       new(...)
