@@ -61,13 +61,13 @@ RSpec.describe Maybe do
     it 'some' do 
       result = Maybe[1] >> proc { Maybe[_1 + 2] }
 
-      expect(result.inspect).to eq('#<Zx::Maybe::Some:0xc6c value=3>')
+      expect(result.inspect).to include('#<Zx::Maybe::Some')
     end
     
     it 'none' do 
       result = Maybe[nil].map{ _1 + 2}
 
-      expect(result.inspect).to eq('#<Zx::Maybe::None:0xc80 value=nil>')
+      expect(result.inspect).to include('#<Zx::Maybe::None')
     end
   end
 

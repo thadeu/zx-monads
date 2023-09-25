@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Thadeu Esteves']
   spec.email         = ['tadeuu@gmail.com']
   spec.summary       = 'FP Monads for Ruby'
-  spec.description   = 'Use Either or Maybe to handle errors in your code'
+  spec.description   = 'Use Maybe to handle errors in your code'
   spec.homepage      = 'https://github.com/thadeu/zx-monads'
   spec.license       = 'MIT'
 
