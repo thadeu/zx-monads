@@ -7,7 +7,7 @@ Style/Documentation:
   Enabled: false
 
 Layout:
-  Enabled: false
+  Enabled: true
 
 Style/FrozenStringLiteralComment:
   Enabled: true

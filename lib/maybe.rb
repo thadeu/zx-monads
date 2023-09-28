@@ -1,13 +1,15 @@
 # frozen_string_literal: true
 
 class Maybe
+  attr_reader :value
+
   IsBlank = ->(value) { value.nil? || value.to_s.strip&.empty? || !value }
 
   def self.of(...)
     new.of(...)
   end
 
-  def self.[](...) 
+  def self.[](...)
     of(...)
   end
 
@@ -18,7 +20,7 @@ class Maybe
   rescue StandardError
     None.new
   end
-  
+
   def type
     to_s.downcase.to_sym
   end
@@ -32,7 +34,7 @@ class Maybe
   end
 
   def unwrap
-     @value
+    @value
   end
 
   def or(value)
@@ -42,6 +44,7 @@ class Maybe
   def >>(other)
     self > other
   end
+  alias | >>
 
   def fmap(_)
     self
@@ -58,7 +61,7 @@ class Maybe
     case arg
     in None then self
     in Symbol | String then dig(arg)
-    end 
+    end
   rescue StandardError => e
     None.new(e.message)
   end
@@ -77,7 +80,7 @@ class Maybe
   def dig(...)
     Maybe[@value&.dig(...)]
   end
-  
+
   def dig!(...)
     dig(...).unwrap
   end
@@ -121,7 +124,7 @@ class Maybe
       @value = value
     end
 
-    def deconstruct 
+    def deconstruct
       [@value]
     end
 
@@ -130,7 +133,7 @@ class Maybe
     end
 
     def to_s
-       'Some'
+      'Some'
     end
 
     def >(other)
@@ -143,7 +146,7 @@ class Maybe
   end
 
   class None < Maybe
-    def self.[](...) 
+    def self.[](...)
       new(...)
     end
 
