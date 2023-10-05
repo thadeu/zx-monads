@@ -68,11 +68,11 @@ class Order
 end
 
 class Order
-  include Zx::Maybe
+  include Zx::Maybeable
 end
 
 class ProcessOrder < Zx::Steps
-  # Maybe included now!
+  # include Zx::Maybeable included now!
 end
 ```
 
@@ -102,35 +102,35 @@ end
 ### ZX::Maybe
 
 ```ruby
-result = Maybe[1] # or Maybe.of(1)
+result = Zx::Maybe[1] # or Maybe.of(1)
 ```
 
 ```ruby
-result = Maybe[nil] # or Maybe.of(nil)
+result = Zx::Maybe[nil] # or Maybe.of(nil)
 ```
 
 ```ruby
-result = Maybe[1].map{ _1 + 2}
+result = Zx::Maybe[1].map{ _1 + 2}
 # -> Some(3)
 ```
 
 ```ruby
-result = Maybe[nil].map{ _1 + 2}
+result = Zx::Maybe[nil].map{ _1 + 2}
 # -> None
 ```
 
 ```ruby
-result = Maybe.of(1).or(2)
+result = Zx::Maybe.of(1).or(2)
 result.or(2) # 1
 ```
 
 ```ruby
-result = Maybe.of(' ').or(2)
+result = Zx::Maybe.of(' ').or(2)
 result.or(2) # 2
 ```
 
 ```ruby
-result = Maybe.of(' ').or(2)
+result = Zx::Maybe.of(' ').or(2)
 result.or(2) # 2
 ```
 
@@ -143,7 +143,7 @@ order = {
   }
 }
 
-price =  Maybe[order]
+price =  Zx::Maybe[order]
   .map { _1[:shopping] }
   .map { _1[:banana] }
   .map { _1[:price] }
@@ -152,13 +152,13 @@ price =  Maybe[order]
 
 # or using #dig
 
-price =  Maybe[order].dig(:shopping, :banana, :price)
+price =  Zx::Maybe[order].dig(:shopping, :banana, :price)
 # -> Some(10.0)
 
-price_none =  Maybe[order].dig(:shopping, :banana, :price_non_exists)
+price_none =  Zx::Maybe[order].dig(:shopping, :banana, :price_non_exists)
 # -> None
 
-price_or =  Maybe[order].dig(:shopping, :banana, :price_non_exists).or(10.0)
+price_or =  Zx::Maybe[order].dig(:shopping, :banana, :price_non_exists).or(10.0)
 # -> Some(10.0)
 ```
 
@@ -167,11 +167,11 @@ class Response
   attr_reader :body
 
   def initialize(new_body)
-    @body = Maybe[new_body]
+    @body = Zx::Maybe[new_body]
   end
 
   def change(new_body)
-    @body = Maybe[new_body]
+    @body = Zx::Maybe[new_body]
   end
 end
 
@@ -182,7 +182,7 @@ response.change({ status: 200 })
 expect(response.body).to be_some
 
 response_status = response.body.match(
-  some: ->(body) { Maybe[body].map { _1.fetch(:status) }.unwrap },
+  some: ->(body) { Zx::Maybe[body].map { _1.fetch(:status) }.unwrap },
   none: -> {}
 )
 ```
@@ -196,7 +196,7 @@ response = Response.new(dump) # It's receive an JSON stringified
 
 module StatusCodeUnwrapModule
   def self.call(body)
-    Maybe[body]
+    Zx::Maybe[body]
       .map{ JSON(_1, symbolize_names: true) }
       .dig(:status, :code)
       .apply(&:to_i)
@@ -215,11 +215,11 @@ expect(response_status).to eq(300)
 You can use `>>` to compose many callables, like this.
 
 ```rb
-sum = ->(x) { Maybe::Some[x + 1] }
+sum = ->(x) { Zx::Maybe::Some[x + 1] }
 
-subtract = ->(x) { Maybe::Some[x - 1] }
+subtract = ->(x) { Zx::Maybe::Some[x - 1] }
 
-result = Maybe[1] >> \
+result = Zx::Maybe[1] >> \
   sum >> \
   subtract
 
@@ -229,11 +229,11 @@ expect(result.unwrap).to eq(1)
 If handle None, no worries.
 
 ```rb
-sum = ->(x) { Maybe::Some[x + 1] }
+sum = ->(x) { Zx::Maybe::Some[x + 1] }
 
-subtract = ->(_) { Maybe::None.new }
+subtract = ->(_) { Zx::Maybe::None.new }
 
-result = Maybe[1] \
+result = Zx::Maybe[1] \
   >> sum \
   >> subtract
 
@@ -243,7 +243,7 @@ expect(result.unwrap).to be_nil
 ```rb
 class Order
   def self.sum(x)
-    Maybe[{ number: x + 1 }]
+    Zx::Maybe[{ number: x + 1 }]
   end
 end
 
@@ -258,7 +258,7 @@ expect(result.unwrap).to be(2)
 
 ```rb
 class Order
-  include Zx::Maybe
+  include Zx::Maybeable
 
   def self.sum(x)
     new.sum(x)
@@ -280,7 +280,7 @@ expect(result.unwrap).to be(2)
 
 ```rb
 class Order
-  include Zx::Maybe
+  include Zx::Maybeable
 
   def self.sum(x)
     new.sum(x)
@@ -305,7 +305,7 @@ expect(number.unwrap).to be(0) # nil.to_i == 0
 
 ```rb
 class Order
-  include Zx::Maybe
+  include Zx::Maybeable
 
   def self.sum(x)
     new.sum(x)
@@ -327,7 +327,7 @@ With default value, in None case.
 
 ```rb
 class Order
-  include Zx::Maybe
+  include Zx::Maybeable
 
   def self.sum(x)
     new.sum(x)
@@ -347,7 +347,7 @@ expect(result.unwrap).to be(2)
 
 ```rb
 class Order
-  include Zx::Maybe
+  include Zx::Maybeable
 
   def self.sum(x)
     new.sum(x)

@@ -173,20 +173,20 @@ module Zx
     end
 
     module ClassMethods
-      None = ->(*kwargs) { Zx::Maybe::None.new(*kwargs) }
+      None = ->(value = nil) { Zx::Maybe::None.new(value) }
       Some = ->(*kwargs) { Zx::Maybe::Some.new(*kwargs) }
       Maybe = ->(*kwargs) { Zx::Maybe.of(*kwargs) }
 
       def Maybe(*kwargs)
-        Zx::Maybe.of(*kwargs)
+        Maybe[*kwargs]
       end
 
       def Some(*kwargs)
-        Zx::Maybe::Some.new(*kwargs)
+        Some[*kwargs]
       end
 
-      def None(*kwargs)
-        Zx::Maybe::None.new(*kwargs)
+      def None(value = nil)
+        Zx::Maybe.of(value)
       end
 
       def Try(default = nil, options = {})
@@ -196,4 +196,7 @@ module Zx
       end
     end
   end
+
+  include Maybe::ClassMethods
+  extend Maybe::ClassMethods
 end
