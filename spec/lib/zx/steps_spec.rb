@@ -95,7 +95,7 @@ RSpec.describe Zx::Steps do
 
   context '#step with forward' do
     class OrderWithForwardStep
-      include Zx::Maybe
+      include Zx::Maybeable
 
       def initialize(x = nil)
         @x = x

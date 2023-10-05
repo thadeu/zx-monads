@@ -2,69 +2,69 @@
 
 require 'spec_helper'
 
-RSpec.describe Maybe do
+RSpec.describe Zx::Maybe do
   context 'type' do
     it 'some type' do
-      expect(Maybe[1].type).to eq(:some)
+      expect(Zx::Maybe[1].type).to eq(:some)
     end
 
     it 'none type' do
-      expect(Maybe[nil].type).to eq(:none)
+      expect(Zx::Maybe[nil].type).to eq(:none)
     end
   end
 
   context 'some?' do
     it 'should be true' do
-      expect(Maybe[1].some?).to be_truthy
+      expect(Zx::Maybe[1].some?).to be_truthy
     end
 
     it 'should be false' do
-      expect(Maybe[nil].some?).to be_falsey
+      expect(Zx::Maybe[nil].some?).to be_falsey
     end
   end
 
   context 'unwrap' do
     it 'some value' do
-      expect(Maybe[1].unwrap).to eq(1)
+      expect(Zx::Maybe[1].unwrap).to eq(1)
     end
 
     it 'none value' do
-      expect(Maybe[''].unwrap).to eq(nil)
+      expect(Zx::Maybe[''].unwrap).to eq(nil)
     end
   end
 
   context 'map' do
     it 'some value' do
-      result = Maybe[1].map { _1 + 2 }
+      result = Zx::Maybe[1].map { _1 + 2 }
 
-      expect(result).to be_a(Maybe::Some)
+      expect(result).to be_a(Zx::Maybe::Some)
       expect(result.unwrap).to eq(3)
     end
 
     it 'none value' do
-      result = Maybe[nil].map { _1 + 2 }
+      result = Zx::Maybe[nil].map { _1 + 2 }
 
-      expect(result).to be_a(Maybe::None)
+      expect(result).to be_a(Zx::Maybe::None)
       expect(result.unwrap).to eq(nil)
     end
 
     it 'none value when rescue' do
-      result = Maybe[nil].map { raise 'error' }
+      result = Zx::Maybe[nil].map { raise 'error' }
 
-      expect(result).to be_a(Maybe::None)
+      expect(result).to be_a(Zx::Maybe::None)
       expect(result.unwrap).to eq(nil)
     end
   end
 
   context 'inspect' do
     it 'some' do
-      result = Maybe[1] >> proc { Maybe[_1 + 2] }
+      result = Zx::Maybe[1] >> proc { Zx::Maybe[_1 + 2] }
 
       expect(result.inspect).to include('#<Zx::Maybe::Some')
     end
 
     it 'none' do
-      result = Maybe[nil].map { _1 + 2 }
+      result = Zx::Maybe[nil].map { _1 + 2 }
 
       expect(result.inspect).to include('#<Zx::Maybe::None')
     end
@@ -72,21 +72,21 @@ RSpec.describe Maybe do
 
   context 'of' do
     it 'some value' do
-      expect(Maybe.of(1).or(2)).to eq(1)
+      expect(Zx::Maybe.of(1).or(2)).to eq(1)
     end
 
     it 'none value' do
-      expect(Maybe.of(' ').or(2)).to eq(2)
+      expect(Zx::Maybe.of(' ').or(2)).to eq(2)
     end
   end
 
   context 'or' do
     it 'some value' do
-      expect(Maybe[1].or(2)).to eq(1)
+      expect(Zx::Maybe[1].or(2)).to eq(1)
     end
 
     it 'none value' do
-      expect(Maybe[''].or(2)).to eq(2)
+      expect(Zx::Maybe[''].or(2)).to eq(2)
     end
   end
 
@@ -99,7 +99,7 @@ RSpec.describe Maybe do
       }
     }
 
-    price =  Maybe[hash]
+    price =  Zx::Maybe[hash]
              .map { _1[:shopping] }
              .map { _1[:banana] }
              .map { _1[:price] }
@@ -117,7 +117,7 @@ RSpec.describe Maybe do
       }
     }
 
-    price = Maybe[hash]
+    price = Zx::Maybe[hash]
             .dig(:shopping)
             .dig(:banana)
             .dig(:prices)
@@ -131,11 +131,11 @@ RSpec.describe Maybe do
       attr_reader :body
 
       def initialize(new_body)
-        @body = Maybe[new_body]
+        @body = Zx::Maybe[new_body]
       end
 
       def change(new_body)
-        @body = Maybe[new_body]
+        @body = Zx::Maybe[new_body]
       end
     end
 
@@ -147,7 +147,7 @@ RSpec.describe Maybe do
       response.change({ status: 200 })
 
       response_status = response.body.match(
-        some: ->(body) { Maybe[body].map { _1.fetch(:status) }.unwrap },
+        some: ->(body) { Zx::Maybe[body].map { _1.fetch(:status) }.unwrap },
         none: -> {}
       )
 
@@ -165,7 +165,7 @@ RSpec.describe Maybe do
       response = Response.new({ status: ' ' })
 
       response_status = response.body.match(
-        some: ->(body) { Maybe[body].dig(:status).or(400) },
+        some: ->(body) { Zx::Maybe[body].dig(:status).or(400) },
         none: -> { 400 }
       )
 
@@ -178,7 +178,7 @@ RSpec.describe Maybe do
 
       module StatusCodeUnwrapModule
         def self.call(body)
-          Maybe[body]
+          Zx::Maybe[body]
             .map { JSON(_1, symbolize_names: true) }
             .dig(:status, :code)
             .apply(&:to_i)
@@ -200,13 +200,13 @@ RSpec.describe Maybe do
 
       class StatusCodeUnwrapFail
         def self.call(value)
-          Maybe[value]
+          Zx::Maybe[value]
             .dig(:status, :code)
             .unwrap
         end
       end
 
-      response_status = Maybe[response.body.unwrap[:status][:codes]].match(
+      response_status = Zx::Maybe[response.body.unwrap[:status][:codes]].match(
         some: StatusCodeUnwrapFail,
         none: -> { 400 }
       )
@@ -215,10 +215,10 @@ RSpec.describe Maybe do
     end
 
     it 'using composition' do
-      sum = ->(x) { Maybe::Some[x + 1] }
-      subtract = ->(x) { Maybe::Some[x - 1] }
+      sum = ->(x) { Zx::Maybe::Some[x + 1] }
+      subtract = ->(x) { Zx::Maybe::Some[x - 1] }
 
-      result = Maybe[1] >> \
+      result = Zx::Maybe[1] >> \
                sum >> \
                subtract
 
@@ -226,10 +226,10 @@ RSpec.describe Maybe do
     end
 
     it 'using composition' do
-      sum = ->(x) { Maybe::Some[x + 1] }
-      subtract = ->(_) { Maybe::None.new }
+      sum = ->(x) { Zx::Maybe::Some[x + 1] }
+      subtract = ->(_) { Zx::Maybe::None.new }
 
-      result = Maybe[1] \
+      result = Zx::Maybe[1] \
         >> sum \
         >> subtract
 
@@ -239,7 +239,7 @@ RSpec.describe Maybe do
     it 'using composition' do
       class Order
         def self.sum(x)
-          Maybe[{ number: x + 1 }]
+          Zx::Maybe[{ number: x + 1 }]
         end
       end
 
@@ -252,7 +252,7 @@ RSpec.describe Maybe do
 
     it 'using composition' do
       class Order
-        include Zx::Maybe
+        include Zx::Maybeable
 
         def self.sum(x)
           new.sum(x)
@@ -270,7 +270,7 @@ RSpec.describe Maybe do
       expect(result.unwrap).to be(2)
 
       class Order2
-        include Zx::Maybe
+        include Zx::Maybeable
 
         def self.sum(x)
           Maybe[{ number: x + 1 }]

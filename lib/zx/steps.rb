@@ -2,7 +2,7 @@
 
 module Zx
   class Steps
-    include Maybe
+    include Zx::Maybeable
 
     class << self
       def step(step)
