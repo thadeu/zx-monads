@@ -93,7 +93,7 @@ end
 #apply!{} -> Same the map! but more legible
 #dig(keys) -> Get values using keys like Hash#dig
 #dig!(keys) -> Same them dig, but return unwrap
-#math(some:, none:) -> Receive callables and associate them
+#match(some:, none:) -> Receive callables and associate them
 #on_success{} -> Only when Some
 #on_failure{} -> Only then None
 #on(:success|:failure){}
